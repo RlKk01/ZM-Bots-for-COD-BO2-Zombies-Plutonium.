@@ -113,8 +113,8 @@ bot_set_skill()
 	setdvar("bot_MeleeDist", "70");
 	setdvar("bot_YawSpeed", "4");
 	setdvar("bot_SprintDistance", "256");
-	setDvar("g_playerCollision", "nobody");
-	setDvar("g_playerEjection", "nobody");
+	setdvar("g_playerCollision", "nobody");
+	setdvar("g_playerEjection", "nobody");
 }
 
 // New function to handle bot stance actions
@@ -408,6 +408,20 @@ bot_teleport_think()
 	if(Distance(self.origin, players[0].origin) > 12500 && players[0] IsOnGround())
 	{
 		self SetOrigin(players[0].origin + (0,50,0));
+	}
+	else if (getDvar("mapname") == "zm_highrise")
+	{
+		if(Distance(self.origin, players[0].origin) > 3000 && players[0] IsOnGround())
+		{
+			self SetOrigin(players[0].origin + (0,50,0));
+		}
+	}
+	else if (getDvar("mapname") == "zm_buried")
+	{
+		if(Distance(self.origin, players[0].origin) > 3000 && players[0] IsOnGround())
+		{
+			self SetOrigin(players[0].origin + (0,50,0));
+		}
 	}
 }
 
@@ -1362,7 +1376,7 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
         }
     }
     
-	    // Round-based logic - in early rounds take most weapons
+	// Round-based logic - in early rounds take most weapons
     if(level.round_number <= 8)
     {
         return true;
