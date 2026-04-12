@@ -14,11 +14,6 @@
 #define BOT_ACTION_CROUCH "crouch"
 #define BOT_ACTION_PRONE "prone"
 
-main()
-{
-	init_dvars();
-}
-
 bot_spawn()
 {
     self bot_spawn_init();
@@ -74,17 +69,6 @@ init()
         level.bots[level.bots.size] = bot_entity;
         wait 1; // Add a brief pause between bot spawns
     }
-}
-
-create_dvar(dvar, set)
-{
-    if(getDvar(dvar) == "")
-		setDvar(dvar, set);
-}
-
-init_dvars()
-{
-	create_dvar("bots_stay", 0);
 }
 
 bot_set_skill()
@@ -265,7 +249,6 @@ bot_main()
 				continue;
 			}
 			self bot_combat_think(damage, attacker, direction);
-			//self bot_update_follow_host();
 			self bot_update_wander();
 			self bot_update_lookat();
 			self bot_stand_fix();
@@ -1921,14 +1904,6 @@ bot_perks_origins()
 		self SetPerk("specialty_flakjacket");
 		self SetPerk("specialty_deadshot");
 		self waittill("player_revived");
-	}
-}
-
-bot_update_follow_host()
-{
-	if(self AddGoal(get_players()[0].origin, 75, 1, "wander") * getDvarInt("bots_stay"))
-	{
-		self CancelGoal("wander");
 	}
 }
 
