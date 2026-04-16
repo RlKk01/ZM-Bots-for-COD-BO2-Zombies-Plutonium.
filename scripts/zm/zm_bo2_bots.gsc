@@ -640,17 +640,17 @@ bot_buy_box()
 		}
 		else if (level.round_number <= 15)
 		{
-			if (isDefined(self.bot.last_box_interaction_time) && (GetTime() - self.bot.last_box_interaction_time < 180000))
+			if (isDefined(self.bot.last_box_interaction_time) && (GetTime() - self.bot.last_box_interaction_time < 90000))
 				return;
 		}
 		else if (level.round_number <= 25)
 		{
-			if (isDefined(self.bot.last_box_interaction_time) && (GetTime() - self.bot.last_box_interaction_time < 300000))
+			if (isDefined(self.bot.last_box_interaction_time) && (GetTime() - self.bot.last_box_interaction_time < 150000))
 				return;
 		}
 		else
 		{
-			if (isDefined(self.bot.last_box_interaction_time) && (GetTime() - self.bot.last_box_interaction_time < 600000))
+			if (isDefined(self.bot.last_box_interaction_time) && (GetTime() - self.bot.last_box_interaction_time < 300000))
 				return;
 		}
 
@@ -1110,9 +1110,9 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
     // Define weapon tiers for better decision making
     tier1_weapons = array("staff_water", "staff_air", "staff_fire", "staff_lightning", "blundersplat", "blundergat", "slipgun", "slowgun", "raygun_mark2", "ray_gun");
 	tier2_weapons = array("usrpg", "srm1216", "svu", "minigun_alcatraz", "m1911_upgraded", "c96_upgraded");
-	tier3_weapons = array("saiga12", "barretm82", "lsat", "hamr", "rpd", "mg08", "rnma");
-    tier4_weapons = array("dsr50", "scar", "hk416", "an94", "tar21", "galil", "ak47", "mp44", "evoskorpion", "pdw57", "thompson", "fivesevendw");
-    tier5_weapons = array("ksg", "870mcs", "type95", "xm8", "m16", "mp5k", "ak74u_extclip", "mp40_stalker", "beretta93r_extclip");
+	tier3_weapons = array("lsat", "hamr", "rpd", "mg08");
+    tier4_weapons = array("saiga12", "scar", "hk416", "an94", "tar21", "galil", "ak47", "mp44", "evoskorpion", "pdw57", "thompson", "fivesevendw", "rnma");
+    tier5_weapons = array("ksg", "870mcs", "dsr50", "barretm82", "type95", "xm8", "m16", "mp5k", "ak74u_extclip", "mp40_stalker", "beretta93r_extclip");
     tier6_weapons = array("fnfal", "qcw05", "ak74u", "mp40", "kard", "beretta93r", "fiveseven", "judge", "python");
 	tier7_weapons = array("m32", "rottweil72", "ballista", "saritch", "m14", "uzi", "m1911", "c96", "knife_ballistic");
     
@@ -1212,6 +1212,8 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
 	   IsSubStr(boxWeapon, "emp_grenade") || 
 	   IsSubStr(boxWeapon, "cymbal_monkey") || 
 	   IsSubStr(boxWeapon, "knife_ballistic") || 
+	   IsSubStr(boxWeapon, "python") || 
+	   IsSubStr(boxWeapon, "judge") || 
 	   IsSubStr(boxWeapon, "m32"))
     {
         return (randomfloat(1) < 0); // 0% chance
@@ -1459,22 +1461,30 @@ bot_buy_wallbuy()
 	}
 	foreach(wallbuy in wallbuys)
 	{
-		if(Distance(wallbuy.origin, self.origin) < 500 && wallbuy.trigger_stub.cost <= self.score && bot_best_gun(wallbuy.trigger_stub.zombie_weapon_upgrade, weapon) && FindPath(self.origin, wallbuy.origin, undefined, 0, 1) && weapon != wallbuy.trigger_stub.zombie_weapon_upgrade && !is_offhand_weapon(wallbuy.trigger_stub.zombie_weapon_upgrade))
+		if(Distance(wallbuy.origin, self.origin) < 500 
+		&& wallbuy.trigger_stub.cost <= self.score 
+		&& bot_best_gun(wallbuy.trigger_stub.zombie_weapon_upgrade, weapon) 
+		&& FindPath(self.origin, wallbuy.origin, undefined, 0, 1) 
+		&& weapon != wallbuy.trigger_stub.zombie_weapon_upgrade 
+		&& !is_offhand_weapon(wallbuy.trigger_stub.zombie_weapon_upgrade))
 		{
 			if(weapon == upgrade_name)
 				return;
+			
 			if(!isdefined(wallbuy.trigger_stub))
 				return;
+			
 			if(!isdefined(wallbuy.trigger_stub.zombie_weapon_upgrade))
 				return;
+			
 			weaponToBuy = wallbuy;
 			break;
 		}
 	}
 	if(!isdefined(weaponToBuy))
 		return;
+	
 	self AddGoal(weaponToBuy.origin, 99999, 2, "weaponBuy");
-	//IPrintLn(weaponToBuy.zombie_weapon_upgrade);
 	while(!self AtGoal("weaponBuy") && !Distance(self.origin, weaponToBuy.origin) < 99999)
 	{
 		wait 1;
@@ -1490,29 +1500,23 @@ bot_buy_wallbuy()
 	self TakeAllWeapons();
 	self GiveWeapon(weaponToBuy.trigger_stub.zombie_weapon_upgrade);
 	self SetSpawnWeapon(weaponToBuy.trigger_stub.zombie_weapon_upgrade);
-	//IPrintLn("Bot Bought Weapon");
 }
 
 bot_best_gun(buyingweapon, currentweapon)
 {
     // Priority weapons based on round number
-    if(level.round_number >= 10)
+    if(level.round_number >= 8)
     {
-        priority_weapons = array("lsat_zm", "an94_zm", "mp44_zm", "870mcs_zm", "m16_zm", "thompson_zm", "mp40_zm", "mp5k_zm", "pdw57_zm", "ak74u_zm");
+        priority_weapons = array("lsat_zm", "870mcs_zm", "an94_zm", "m16_zm", "mp44_zm", "pdw57_zm", "mp5k_zm", "ak74u_zm", "thompson_zm", "mp40_zm");
         foreach(weapon in priority_weapons)
         {
             if(buyingweapon == weapon)
                 return true;
         }
     }
-    else if(level.round_number >= 5)
+    else if(level.round_number <= 5)
     {
         if(buyingweapon == "pdw57_zm" || buyingweapon == "mp5k_zm")
-            return true;
-    }
-    else
-    {
-        if(buyingweapon == "mp5k_zm")
             return true;
     }
 	

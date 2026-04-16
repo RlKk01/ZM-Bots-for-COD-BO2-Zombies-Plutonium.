@@ -73,6 +73,12 @@ bot_combat_think(damage, attacker, direction)
 // Prevents multiple bots from trying to open the same door at once
 bot_safely_interact_with_doors()
 {
+	if (isDefined(self.bot.last_door_use_time))
+	{
+		if (getTime() - self.bot.last_door_use_time < 2000)
+			return;
+	}
+	
 	// Don't try to open doors if another bot is already doing it
 	if(is_true(level.door_being_opened))
 		return;
@@ -113,6 +119,7 @@ bot_safely_interact_with_doors()
 		// Reset flag so other bots can try later
 		level.door_being_opened = false;
 	}
+	self.bot.last_door_use_time = getTime();
 }
 
 // Prevents bots from using mystery boxes that have teddy bears
@@ -149,26 +156,44 @@ bot_safely_use_mystery_box()
 		}
 		
 		// Watch for teddy bear notifications
-		self thread watch_for_box_teddy(closest_box);
+		if (!isDefined(self.bot.watching_box) || !self.bot.watching_box)
+		{
+			self.bot.watching_box = true;
+			self thread watch_for_box_teddy(closest_box);
+		}
+		
+		if (isDefined(self.bot.last_box_use_time))
+		{
+			if (getTime() - self.bot.last_box_use_time < 2000)
+				return;
+		}
 		
 		// Use the box
 		self UseButtonPressed();
 	}
+	self.bot.last_box_use_time = getTime();
 }
 
 // Monitor box for teddy bear
 watch_for_box_teddy(box)
 {
 	self endon("disconnect");
-	
-	// Wait for the teddy bear notification or other game events
+
 	level waittill_any("weapon_fly_away_start", "teddy_bear", "box_moving");
-	
-	// When teddy bear appears, add this box location to the list of teddy locations
-	if(!array_contains(level.mystery_box_teddy_locations, box.origin))
+
+	if (isDefined(box) && isDefined(box.origin))
 	{
-		level.mystery_box_teddy_locations[level.mystery_box_teddy_locations.size] = box.origin;
+		if(!array_contains(level.mystery_box_teddy_locations, box.origin))
+		{
+			if (level.mystery_box_teddy_locations.size < 32)
+			{			
+				level.mystery_box_teddy_locations[level.mystery_box_teddy_locations.size] = box.origin;
+			}
+		}
 	}
+
+	// IMPORTANT: release the lock so it can run again later
+	self.bot.watching_box = false;
 }
 
 // Check if an array contains a specific value (origin)
@@ -468,10 +493,10 @@ bot_update_aim(frames) //checked matches cerberus output
 		head_offset = 0;
 		
 		else if (has_primary_pistol)
-		head_offset = 30;
+		head_offset = 28;
 		
 		else
-		head_offset = 28;
+		head_offset = 25;
 
         // Distance correction
         if (dist > 1200)
