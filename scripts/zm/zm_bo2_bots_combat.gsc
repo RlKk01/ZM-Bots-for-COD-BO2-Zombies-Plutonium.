@@ -549,27 +549,27 @@ bot_update_aim(frames) //checked matches cerberus output
 		height = centroid[2] - prediction[2];
 		
 		if (has_wonder_staffs || has_blundersplat || has_slowgun || has_slipgun || has_raygun_mk2 || has_sniper)
-		head_offset = 10;
+		aim_offset = 10;
 		
 		else if (has_blundergat || has_shotgun)
-		head_offset = 20;
+		aim_offset = 20;
 		
 		else if (has_raygun || has_explosive_weapon)
-		head_offset = 0;
+		aim_offset = 0;
 		
 		else if (has_primary_pistol)
-		head_offset = 28;
+		aim_offset = 28;
 		
 		else
-		head_offset = 25;
+		aim_offset = 25;
 
         // Distance correction
         if (dist > 1200)
-            head_offset += 6;
+            aim_offset += 6;
         else if (dist > 800)
-            head_offset += 4;
+            aim_offset += 4;
 
-		return prediction + (0, 0, height + head_offset);
+		return prediction + (0, 0, height + aim_offset);
 	}
 
 	height = ent getplayerviewheight();
