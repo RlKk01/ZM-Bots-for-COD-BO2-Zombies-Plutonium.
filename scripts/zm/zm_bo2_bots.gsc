@@ -1213,7 +1213,7 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
 	   IsSubStr(boxWeapon, "cymbal_monkey") || 
 	   IsSubStr(boxWeapon, "knife_ballistic"))
     {
-        return (randomfloat(1) < 0); // 0% chance
+        return false;
     }
 	
     // Check box weapon tier
@@ -1330,7 +1330,7 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
         else if(boxIsTier5 || boxIsTier6 || boxIsTier7)
         {
             // Don't downgrade to these tiers
-            return (randomfloat(1) < 0);
+            return false;
         }
     }
     
@@ -1355,7 +1355,7 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
 		else if(boxIsTier5 || boxIsTier6 || boxIsTier7)
         {
             // Don't downgrade
-            return (randomfloat(1) < 0);
+            return false;
         }
     }
 	
@@ -1380,7 +1380,7 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
 		else if(boxIsTier5 || boxIsTier6 || boxIsTier7)
         {
             // Don't downgrade
-            return (randomfloat(1) < 0);
+            return false;
         }
     }
     
@@ -1394,20 +1394,21 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
     {
         if(boxIsTier2 || boxIsTier3 || boxIsTier4)
             return true;
-        else
-            return (randomfloat(1) < 0.5); // 50% chance for other weapons
+		
+        else if(boxIsTier5 || boxIsTier6 || boxIsTier7)
+            return false;
     }
-    // Late rounds - generally only take tier 2
+    // Late rounds - generally only take tier 2 and tier 3
     else
     {
-        if(boxIsTier2)
+        if(boxIsTier2 || boxIsTier3)
             return true;
-        else if(boxIsTier3)
-            return (randomfloat(1) < 0.7); // 70% chance for tier 3
+		
         else if(boxIsTier4)
-            return (randomfloat(1) < 0.6); // 60% chance for tier 4
-        else
-            return (randomfloat(1) < 0); // 0% chance for other weapons
+            return (randomfloat(1) < 0.1); // 10% chance for tier 4
+		
+        else if(boxIsTier5 || boxIsTier6 || boxIsTier7)
+            return false;
     }
     // Default case - 50/50 chance
     return (randomfloat(1) < 0.5);
