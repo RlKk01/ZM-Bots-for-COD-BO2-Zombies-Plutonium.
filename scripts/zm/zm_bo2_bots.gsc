@@ -1109,9 +1109,9 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
     
     // Define weapon tiers for better decision making
     tier1_weapons = array("staff_water", "staff_air", "staff_fire", "staff_lightning", "blundersplat", "blundergat", "slipgun", "slowgun", "raygun_mark2", "ray_gun");
-	tier2_weapons = array("usrpg", "svu", "minigun_alcatraz", "m1911_upgraded", "c96_upgraded");
+	tier2_weapons = array("usrpg", "minigun_alcatraz", "m1911_upgraded", "c96_upgraded");
 	tier3_weapons = array("870mcs", "lsat", "hamr", "rpd", "mg08");
-    tier4_weapons = array("ksg", "scar", "hk416", "an94", "tar21", "galil", "ak47", "mp44", "evoskorpion", "pdw57", "thompson", "fivesevendw", "judge");
+    tier4_weapons = array("ksg", "svu", "scar", "hk416", "an94", "tar21", "galil", "ak47", "mp44", "evoskorpion", "pdw57", "thompson", "fivesevendw", "judge");
     tier5_weapons = array("dsr50", "srm1216", "barretm82", "type95", "xm8", "m16", "mp5k", "ak74u_extclip", "mp40_stalker", "beretta93r_extclip", "rnma");
     tier6_weapons = array("saiga12", "fnfal", "qcw05", "ak74u", "mp40", "kard", "beretta93r", "fiveseven", "python");
 	tier7_weapons = array("m32", "rottweil72", "ballista", "saritch", "m14", "uzi", "m1911", "c96", "knife_ballistic");
@@ -1319,8 +1319,8 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
         }
         else if(boxIsTier3)
         {
-            // 70% chance to downgrade from the tier for variety
-            return (randomfloat(1) < 0.7);
+            // 80% chance to downgrade from the tier for variety
+            return (randomfloat(1) < 0.8);
         }
         else if(boxIsTier4)
         {
@@ -1351,6 +1351,31 @@ bot_should_take_weapon(boxWeapon, currentWeapon)
         {
             // 70% chance to downgrade from tier 3 for variety
             return (randomfloat(1) < 0.7);
+        }
+		else if(boxIsTier5 || boxIsTier6 || boxIsTier7)
+        {
+            // Don't downgrade
+            return (randomfloat(1) < 0);
+        }
+    }
+	
+    // Have tier 4 weapon already
+    if(currentIsTier4)
+    {
+        if(boxIsTier2)
+        {
+            // 90% chance to upgrade to tier 2
+            return (randomfloat(1) < 0.9);
+        }
+        else if(boxIsTier3)
+        {
+            // 90% chance to upgrade to tier 3
+            return (randomfloat(1) < 0.9);
+        }
+        else if(boxIsTier4)
+        {
+            // 80% chance to swap between tier 4 for variety
+            return (randomfloat(1) < 0.8);
         }
 		else if(boxIsTier5 || boxIsTier6 || boxIsTier7)
         {
